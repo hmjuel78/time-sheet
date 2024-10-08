@@ -1,17 +1,11 @@
-import { Link, Outlet } from "react-router-dom"
+import { Outlet } from "react-router-dom"
+
 
 export default function RootLayout() {
+
   return (
     <>
-      <div id="sidebar">
-        <nav>
-          <ul>
-            <li>
-              <Link to={`/login`}>Login</Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      <h1>Root layout</h1>
       <div id="detail">
         <Outlet />
       </div>
