@@ -16,16 +16,16 @@ const DataTable = () => {
             <table>
                 <thead>
                     {table.getHeaderGroups().map(headerGroup => {
-                        return <tr >{headerGroup.headers.map(header => {
-                            return <th>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</th>
+                        return <tr key={headerGroup.id} >{headerGroup.headers.map(header => {
+                            return <th key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</th>
                         })}</tr>
                     })}
                 </thead>
 
                 <tfoot>
                     {table.getFooterGruops().map(footerGroup => {
-                        return <tr >{footerGroup.footers.map(footer => {
-                            return <td>{footer.isPlaceholder ? null : flexRender(footer.column.columnDef.footer, footer.getContext())}</td>
+                        return <tr key={footerGroup.id}>{footerGroup.footers.map(footer => {
+                            return <td key={footer.id}>{footer.isPlaceholder ? null : flexRender(footer.column.columnDef.footer, footer.getContext())}</td>
                         })}</tr>
                     })}
                 </tfoot>
