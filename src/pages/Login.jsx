@@ -22,7 +22,7 @@ const Login = () => {
             if (result.status === 'success') {
                 toast.success('Login success!!!')
                 localStorage.setItem('token', result.data.token)
-                navigate('/')
+                navigate('/home')
                 dispatch(setLoading(false))
             }
         } catch (error) {
