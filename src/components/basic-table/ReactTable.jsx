@@ -28,12 +28,24 @@ const ReactTable = () => {
             header: () => 'Name',
             cell: info => info.getValue()
         }),
+        columnHelper.accessor('age', {
+            header: () => 'Age',
+            cell: info => info.getValue()
+        }),
+        columnHelper.accessor('city', {
+            header: () => 'City',
+            cell: info => info.getValue()
+        }),
+        columnHelper.accessor('action', {
+            header: () => 'Actions',
+            cell: info => info.getValue()
+        })
     ]
 
     const table = useReactTable({
         data,
         columns,
-        getCoreRowModel,
+        getCoreRowModel: getCoreRowModel(),
     })
 
 
@@ -59,10 +71,18 @@ const ReactTable = () => {
                 </thead>
 
                 <tbody>
-                    {
-                        table.getRowModel
-                    }
 
+                    {
+                        table.getRowModel().rows.map(row => (
+                            <tr key={row.id}>
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id}>
+                                        {cell.column.columnDef.cell(cell.getContext())}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))
+                    }
                 </tbody>
 
 
