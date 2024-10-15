@@ -15,31 +15,34 @@ const ReactTable = () => {
         { id: 7, name: 'Grace', age: 32, city: 'Austin' },
         { id: 8, name: 'Henry', age: 29, city: 'Denver' },
         { id: 9, name: 'Ivy', age: 24, city: 'Miami' },
-        { id: 10, name: 'Jack', age: 36, city: 'Seattle' },
-        // Add more data as needed
+        { id: 10, name: 'Jack', age: 36, city: 'Seattle' }
     ]
 
     const columns = [
-        columnHelper.accessor('id', {
-            header: () => 'ID',
-            cell: info => info.getValue(),
-        }),
-        columnHelper.accessor('name', {
-            header: () => 'Name',
+        {
+            accessorKey: 'id',
+            header: 'ID',
+            size: 225,
             cell: info => info.getValue()
-        }),
-        columnHelper.accessor('age', {
-            header: () => 'Age',
+        },
+        {
+            accessorKey: 'name',
+            header: 'Name',
+            size: 225,
             cell: info => info.getValue()
-        }),
-        columnHelper.accessor('city', {
-            header: () => 'City',
+        },
+        {
+            accessorKey: 'age',
+            header: 'Age',
+            size: 225,
             cell: info => info.getValue()
-        }),
-        columnHelper.accessor('action', {
-            header: () => 'Actions',
+        },
+        {
+            accessorKey: 'city',
+            header: 'City',
+            size: 225,
             cell: info => info.getValue()
-        })
+        }
     ]
 
     const table = useReactTable({
@@ -50,18 +53,17 @@ const ReactTable = () => {
 
 
     return (
-        <div>
-            <h2>Table</h2>
+        <div className="max-w-7xl mx-auto">
+            <h2 className="text-2xl mb-4">React Table</h2>
             <table>
                 <thead>
                     {table.getHeaderGroups().map(headerGroup => (
                         <tr key={headerGroup.id}>
                             {headerGroup.headers.map(header => (
-                                <th key={header.id}>
+                                <th key={header.id} className="min-w-16">
                                     {header.isPlaceholder ? null : (
                                         <div>
-                                            {header.column.columnDef.header(header.getContext())}
-                                            {header.column.getIsSorted() === 'asc' ? ' 🔼' : header.column.getIsSorted() === 'dsc' ? ' 🔽' : ''}
+                                            {header.column.columnDef.header}
                                         </div>
                                     )}
                                 </th>
@@ -76,8 +78,8 @@ const ReactTable = () => {
                         table.getRowModel().rows.map(row => (
                             <tr key={row.id}>
                                 {row.getVisibleCells().map(cell => (
-                                    <td key={cell.id}>
-                                        {cell.column.columnDef.cell(cell.getContext())}
+                                    <td key={cell.id} className="min-w-16 text-center">
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </td>
                                 ))}
                             </tr>
