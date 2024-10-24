@@ -32,21 +32,6 @@ export const userLogin = createAsyncThunk('auth/userLogin',
         } catch (error) {
             return rejectWithValue(handleApiError(error));
         }
-        // try {
-        //     const response = await axios.post(`${BASE_URL}/login`,
-        //         payload,
-        //         {
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 "accept": "/",
-        //             },
-        //             signal: signal
-        //         }
-        //     )
-        //     return response.data
-        // } catch (error) {
-        //     return rejectWithValue(handleApiError(error))
-        // }
     }
 )
 
