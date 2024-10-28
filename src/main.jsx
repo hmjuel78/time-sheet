@@ -23,9 +23,12 @@ import Profile from './pages/Profile.jsx'
 
 const router = createBrowserRouter([
   {
+    path: '/',
+    errorElement: <NotFound />
+  },
+  {
     path: "/login",
     element: <Login />,
-    errorElement: <NotFound />
   },
   {
 
