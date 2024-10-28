@@ -1,6 +1,13 @@
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom"
-const token = localStorage.getItem("token")
+import { authSelector } from './../../features/auth/authSlice';
+import PrivateLayout from "./PrivateLayout";
 
 export const PrivateRoute = ({ children }) => {
-    return token ? children : <Navigate to="/login" replace />;
+    const { token } = useSelector(authSelector)
+
+    if (!token) {
+        return <Navigate to="/login" />
+    }
+    return <PrivateLayout />
 }

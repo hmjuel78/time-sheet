@@ -38,7 +38,6 @@ const RowTable = () => {
     const userlists = users.map(user => {
         return orderedKeys.map(key => user[key])
     })
-    console.log(userlists);
 
 
     return (
