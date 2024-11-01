@@ -1,16 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { handleApiError } from "./../../helpers/handleApiErrors";
 import LocalStorageManager from "../../helpers/localStorageManager";
 import { LOCAL_STORAGE_TOKEN_KEY } from "../../helpers/constants";
 import request from "./../../confiq/requestConfiq";
-import { setLoading } from "../ui/uiSlice";
-import { clearTokenDataFromLocal } from "../../helpers/lib";
+import {
+  clearTokenDataFromLocal,
+  setTokenDataToLocal,
+} from "../../helpers/lib";
 
 // const BASE_URL = 'https://dev-migration.offsight.com/api/auth/v1'
 
 const { REACT_APP_API_BASE_URL } = import.meta.env;
-console.log(REACT_APP_API_BASE_URL);
 
 const initialState = {
   isError: false,
@@ -70,11 +70,18 @@ export const authSlice = createSlice({
     builder
       .addCase(userLogin.pending, (state) => {
         state.isError = false;
-        setLoading = true;
+        state.isLoading = true;
       })
       .addCase(userLogin.fulfilled, (state, action) => {
-        setLoading = false;
-        state.token = action.payload.data.token;
+        state.isLoading = false;
+        const token = action.payload.data.token;
+        state.token = token;
+        setTokenDataToLocal(token);
+      })
+      .addCase(userLogin.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.payload || "Failed to login";
       });
   },
 });

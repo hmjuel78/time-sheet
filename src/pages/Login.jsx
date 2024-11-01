@@ -23,16 +23,17 @@ const Login = () => {
         return toast.error("Please input your password");
       }
       dispatch(setLoading(true));
-      const result = await dispatch(userLogin(user)).unwrap();
-      console.log(result);
 
-      //   if (result.status === "success") {
-      //     toast.success("Login success!!!");
-      //     navigate("/home");
-      //     dispatch(setLoading(false));
-      //   }
+      const result = await dispatch(userLogin(user)).unwrap();
+      console.log(result, "result");
+
+      if (result.status === "success") {
+        toast.success("Login success!!!");
+        navigate("/home");
+        dispatch(setLoading(false));
+      }
     } catch (error) {
-      console.log("h");
+      console.log(error, "error");
       toast.error(error.message);
       dispatch(setLoading(false));
     }
