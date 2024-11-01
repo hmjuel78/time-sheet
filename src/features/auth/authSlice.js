@@ -8,8 +8,6 @@ import {
   setTokenDataToLocal,
 } from "../../helpers/lib";
 
-// const BASE_URL = 'https://dev-migration.offsight.com/api/auth/v1'
-
 const { REACT_APP_API_BASE_URL } = import.meta.env;
 
 const initialState = {
