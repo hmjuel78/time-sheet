@@ -7,6 +7,8 @@ import {
   clearTokenDataFromLocal,
   setTokenDataToLocal,
 } from "../../helpers/lib";
+import { method } from "lodash";
+import axios from "axios";
 
 const { REACT_APP_API_BASE_URL } = import.meta.env;
 
@@ -17,6 +19,7 @@ const initialState = {
   userName: "",
   email: "",
   token: LocalStorageManager.getItem(LOCAL_STORAGE_TOKEN_KEY) || "",
+  managementDatas: [],
 };
 
 export const userLogin = createAsyncThunk(
@@ -30,6 +33,44 @@ export const userLogin = createAsyncThunk(
         withCredentials: false,
         signal,
       });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleApiError(error));
+    }
+  }
+);
+
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (payload, { rejectWithValue, signal }) => {
+    try {
+      const response = await request({
+        method: "POST",
+        url: `${REACT_APP_API_BASE_URL}/auth/v1/logout`,
+        data: JSON.stringify(payload),
+        signal,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleApiError(error));
+    }
+  }
+);
+
+export const management = createAsyncThunk(
+  "auth/management",
+  async (payload, { rejectWithValue, signal }) => {
+    try {
+      const response = await axios.get(
+        `${REACT_APP_API_BASE_URL}/auth/v1/user/management`,
+        {
+          headers: {
+            "x-authorization": initialState.token,
+          },
+          withCredentials: true,
+          signal,
+        }
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(handleApiError(error));
@@ -80,6 +121,40 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.error = action.payload || "Failed to login";
+      })
+      .addCase(logout.pending, (state) => {
+        state.isError = false;
+        state.isLoading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isLoading = false;
+        state = {
+          isLoading: false,
+          user_id: 0,
+          username: "",
+          name: "",
+          email: "",
+          token: "",
+        };
+        clearTokenDataFromLocal();
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+        state.isError = true;
+      })
+      .addCase(management.pending, (state) => {
+        state.isError = false;
+        state.isLoading = true;
+      })
+      .addCase(management.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.managementDatas = action.payload.data;
+      })
+      .addCase(management.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.payload;
       });
   },
 });
