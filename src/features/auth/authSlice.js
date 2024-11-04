@@ -14,6 +14,7 @@ const { REACT_APP_API_BASE_URL } = import.meta.env;
 
 const initialState = {
   isError: false,
+  isLoading: false,
   error: null,
   userId: 0,
   userName: "",
@@ -40,14 +41,30 @@ export const userLogin = createAsyncThunk(
   }
 );
 
-export const logout = createAsyncThunk(
-  "auth/logout",
-  async (payload, { rejectWithValue, signal }) => {
+export const userLogout = createAsyncThunk(
+  "auth/userLogout",
+  async (_, { rejectWithValue, signal }) => {
     try {
       const response = await request({
         method: "POST",
         url: `${REACT_APP_API_BASE_URL}/auth/v1/logout`,
-        data: JSON.stringify(payload),
+        signal,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(handleApiError(error));
+    }
+  }
+);
+
+export const getNewAccessToken = createAsyncThunk(
+  "auth/getNewAccessToken",
+  async (_, { rejectWithValue, signal }) => {
+    try {
+      const response = await request({
+        method: "POST",
+        url: `${REACT_APP_API_BASE_URL}/auth/v1/login/refresh-access-token`,
+        refresherToken: "",
         signal,
       });
       return response.data;
@@ -59,19 +76,25 @@ export const logout = createAsyncThunk(
 
 export const management = createAsyncThunk(
   "auth/management",
-  async (payload, { rejectWithValue, signal }) => {
+  async (_, { rejectWithValue, signal }) => {
     try {
-      const response = await axios.get(
-        `${REACT_APP_API_BASE_URL}/auth/v1/user/management`,
-        {
-          headers: {
-            "x-authorization": initialState.token,
-          },
-          withCredentials: true,
-          signal,
-        }
-      );
+      const response = await request({
+        method: "GET",
+        url: `${REACT_APP_API_BASE_URL}/auth/v1/user/management`,
+        signal,
+      });
       return response.data;
+      // const response = await axios.get(
+      //   `${REACT_APP_API_BASE_URL}/auth/v1/user/management`,
+      //   {
+      //     headers: {
+      //       "x-authorization": initialState.token,
+      //     },
+      //     withCredentials: true,
+      //     signal,
+      //   }
+      // );
+      // return response.data;
     } catch (error) {
       return rejectWithValue(handleApiError(error));
     }
@@ -82,28 +105,28 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    getNewAccessToken: (state, action) => {
-      state = {
-        isLoading: false,
-        user_id: 0,
-        username: "",
-        name: "",
-        email: "",
-        token: "",
-      };
-      clearTokenDataFromLocal();
-    },
-    userLogout: (state, action) => {
-      state = {
-        isLoading: false,
-        user_id: 0,
-        username: "",
-        name: "",
-        email: "",
-        token: "",
-      };
-      clearTokenDataFromLocal();
-    },
+    // getNewAccessToken: (state, action) => {
+    //   state = {
+    //     isLoading: false,
+    //     user_id: 0,
+    //     username: "",
+    //     name: "",
+    //     email: "",
+    //     token: "",
+    //   };
+    //   clearTokenDataFromLocal();
+    // },
+    // userLogout: (state, action) => {
+    //   state = {
+    //     isLoading: false,
+    //     user_id: 0,
+    //     username: "",
+    //     name: "",
+    //     email: "",
+    //     token: "",
+    //   };
+    //   clearTokenDataFromLocal();
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -122,11 +145,11 @@ export const authSlice = createSlice({
         state.isError = true;
         state.error = action.payload || "Failed to login";
       })
-      .addCase(logout.pending, (state) => {
+      .addCase(userLogout.pending, (state) => {
         state.isError = false;
         state.isLoading = true;
       })
-      .addCase(logout.fulfilled, (state) => {
+      .addCase(userLogout.fulfilled, (state) => {
         state.isLoading = false;
         state = {
           isLoading: false,
@@ -138,7 +161,7 @@ export const authSlice = createSlice({
         };
         clearTokenDataFromLocal();
       })
-      .addCase(logout.rejected, (state, action) => {
+      .addCase(userLogout.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
         state.isError = true;
@@ -155,11 +178,24 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.error = action.payload;
+      })
+      .addCase(getNewAccessToken.pending, (state) => {
+        state.isError = false;
+        state.isLoading = true;
+      })
+      .addCase(getNewAccessToken.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.token = action.payload.data.token;
+      })
+      .addCase(getNewAccessToken.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.payload;
       });
   },
 });
 
 export const authSelector = (state) => state.authReducer;
-export const { getNewAccessToken, userLogout } = authSlice.actions;
+// export const { userLogout } = authSlice.actions;
 
 export default authSlice.reducer;

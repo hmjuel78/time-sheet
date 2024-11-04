@@ -1,6 +1,6 @@
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { userLogout } from "../features/auth/authSlice";
+import { getNewAccessToken, userLogout } from "../features/auth/authSlice";
 const { REACT_APP_NODE_ENV, REACT_APP_API_BASE_URL } = import.meta.env;
 let store;
 
@@ -55,10 +55,11 @@ client.interceptors.request.use(
   (config) => {
     config.headers = config.headers ?? {};
 
-    // if (!config.headers["x-authorization"]) {
-    //     config.headers["x-authorization"] =
-    //         `${store.getState().userReducer?.token || "token-not-found"}`;
-    // }
+    if (!config.headers["x-authorization"]) {
+      config.headers["x-authorization"] = `${
+        store.getState().authReducer?.token || "token-not-found"
+      }`;
+    }
     config.headers["x-source"] = source;
     config.headers["x-platform"] = platform;
     config.headers["x-browser"] = browser;
@@ -76,7 +77,8 @@ client.interceptors.response.use(
     if (error?.response?.status === 430 || error?.code == "ERR_NETWORK") {
       queuedRequests = [];
       store.dispatch(userLogout());
-      // toast.info("Refresh token error, please login again.");
+      toast.info("Refresh token error, please login again.");
+      window.location.reload();
       return Promise.reject(error);
     }
 
@@ -86,13 +88,12 @@ client.interceptors.response.use(
       if (!isRefreshing) {
         isRefreshing = true;
         try {
-          const response = await store.dispatch(getNewAccessToken());
-
+          const response = await store.dispatch(getNewAccessToken()).unwrap();
           if (!response?.token) {
             return Promise.reject(error);
           }
 
-          // const response = await store.dispatch(getNewAccessToken()).unwrap();
+          //const response = await store.dispatch(getNewAccessToken()).unwrap();
           executeQueuedRequests(response.token);
 
           error.config.headers["x-authorization"] = response.token;
@@ -100,7 +101,7 @@ client.interceptors.response.use(
         } catch (error) {
           if (error?.response?.status === 430) {
             store.dispatch(userLogout());
-            // toast.info("Refresh token error, please login again.");
+            toast.info("Refresh token error, please login again.");
           }
           return Promise.reject(error);
         } finally {

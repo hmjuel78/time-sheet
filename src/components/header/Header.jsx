@@ -1,5 +1,5 @@
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { authSelector, logout } from "../../features/auth/authSlice";
+import { authSelector, userLogout } from "../../features/auth/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../../features/ui/uiSlice";
 import toast from "react-hot-toast";
@@ -32,7 +32,7 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       dispatch(setLoading(true));
-      const result = await dispatch(logout());
+      const result = await dispatch(userLogout());
       dispatch(setLoading(false));
       //   navigate("/profile");
       window.location.reload();

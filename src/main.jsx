@@ -23,6 +23,9 @@ import {
 } from "./routes/rootLayout/PrivateRoute.jsx";
 import PrivateLayout from "./routes/rootLayout/PrivateLayout.jsx";
 import Profile from "./pages/Profile.jsx";
+import { injectStoreToAxios } from "./confiq/requestConfiq.js";
+
+injectStoreToAxios(store);
 
 const router = createBrowserRouter([
   {
