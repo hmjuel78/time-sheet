@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { handleApiError } from "./../../helpers/handleApiErrors";
-import LocalStorageManager from "../../helpers/localStorageManager";
-import { LOCAL_STORAGE_TOKEN_KEY } from "../../helpers/constants";
 import request from "./../../confiq/requestConfiq";
 
 const { REACT_APP_API_BASE_URL } = import.meta.env;
